@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Resources\ProductResource;
-
+use App\Models\Organisation;
 
 class ProductController extends Controller
 {
@@ -202,6 +202,48 @@ class ProductController extends Controller
             'imageUrl' => $imageUrl,
             'user_id' => auth()->id(),
             'org_id' => $org_id,
+            'category' => $request->input('category'),
+        ]);
+
+        $product = new ProductResource($product);
+        return response()->json([
+            'status' => 'success',
+            "message" => "Product created successfully",
+            'status_code' => 201,
+            'data' => $product
+        ]);
+    }
+
+
+    public function create(CreateProductRequest $request)
+    {
+
+
+        if ($request->hasFile('image_url')) {
+            $file = $request->file('image_url');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time() . '.' . $extension;
+            $path = 'uploads/product_images/';
+            $file->move(public_path($path), $filename);
+
+            $imageUrl = $path . $filename;
+        } else {
+            $imageUrl = null;
+        }
+
+
+
+        $product = Product::create([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'size' => $request->input('size'),
+            'price' => $request->input('price'),
+            'status' => $request->input('status'),
+            'quantity' => $request->input('quantity'),
+
+            'imageUrl' => $imageUrl,
+            'user_id' => auth()->user()->id,
+            'org_id' => Organisation::first()->org_id,
             'category' => $request->input('category'),
         ]);
 

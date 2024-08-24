@@ -26,7 +26,7 @@ class CreateProductRequest extends FormRequest
             'description' => 'required|string',
             'category' => 'required',
             'price' => 'required|numeric',
-            'status' => 'required',
+            'status' => 'required|in:in stock,out of stock',
             'quantity' => 'required',
             'image_url' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048',
         ];
